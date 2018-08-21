@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace timestamp_microservice.Controllers
+namespace TimestampMicroservice.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

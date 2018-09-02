@@ -10,18 +10,27 @@ namespace TimestampMicroservice.Controllers
     [ApiController]
     public class TimestampController : ControllerBase
     {
-        // GET api/timestamp
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        // GET api/timestamp/1450137600
+        [HttpGet("{unix}")]
+        public ActionResult<DateTimeResult> Get(string unix)
         {
-            return new string[] { "value1", "value2" };
+          DateTimeResult Result = new DateTimeResult(unix);
+          return Result;
         }
 
-        // GET api/timestamp/1450137600
-        [HttpGet("{datetime}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
+        public class DateTimeResult {
+          public decimal Unix { get; set; }
+          public string Natural { get; set; }
+          
+          public DateTimeResult(string unix) 
+          {
+            // Unix -> Decimal
+            Unix = decimal.Parse(unix); 
+
+            // Unix -> Date -> String
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(long.Parse(unix));
+            Natural = dateTimeOffset.ToString("dd MMMM yyyy");
+          }
         }
     }
 }

@@ -11,10 +11,10 @@ namespace TimestampMicroservice.Controllers
     public class TimestampController : ControllerBase
     {
         // GET api/timestamp/1450137600
-        [HttpGet("{unix}")]
-        public ActionResult<DateTimeResult> Get(string unix)
+        [HttpGet("{time}")]
+        public ActionResult<DateTimeResult> Get(string time)
         {
-          DateTimeResult Result = new DateTimeResult(unix);
+          DateTimeResult Result = new DateTimeResult(time);
           return Result;
         }
 
@@ -22,14 +22,29 @@ namespace TimestampMicroservice.Controllers
           public decimal Unix { get; set; }
           public string Natural { get; set; }
           
-          public DateTimeResult(string unix) 
+          public DateTimeResult(string time) 
           {
-            // Unix -> Decimal
-            Unix = decimal.Parse(unix); 
+            var isNumeric = int.TryParse(time, out int n);
 
-            // Unix -> Date -> String
-            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(long.Parse(unix));
-            Natural = dateTimeOffset.ToString("dd MMMM yyyy");
+            if(isNumeric)
+            {
+              // Unix -> Decimal
+              Unix = decimal.Parse(time); 
+              
+              // Unix -> Date -> String
+              DateTimeOffset parsedDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(time));
+              Natural = parsedDate.ToString();
+            }
+            else
+            {
+              // String -> Date -> Unix
+              DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(time);
+              Unix = dateTimeOffset.ToUnixTimeMilliseconds();
+
+              // String -> Date -> String
+              DateTimeOffset parsedDate = DateTimeOffset.Parse(time);
+              Natural = parsedDate.ToString();
+            }
           }
         }
     }
